@@ -33,16 +33,24 @@ The associations.json must be found from the folder where LINK_LAUNCHER points i
 	"associations": {
 		"default": {
 			"patterns":  [],
-			"browser": [ "firefox" ],
-			"args":  []
+			"browsers": [
+				{
+					"browser": "firefox",
+					"args": []
+				}
+			],
 		},
 		"youtube": {
 			"patterns": [
 				"youtube\\.com\\/watch\\?.*&?v=.*",
 				"youtu\\.be\\/.*"
 			],
-			"browser": [ "vlc" ],
-			"args": []
+			"browsers": [
+				{
+					"browser": "vlc",
+					"args": []
+				}
+			],
 		}
 	}
 }
