@@ -1,5 +1,13 @@
 @echo off
 
+pushd .
+cd ..
+set location = %cd%
+setx LINK_LAUNCHER %cd%
+popd
+
+
+
 Reg.exe add "HKLM\SOFTWARE\Link Launcher\Capabilities" /v "ApplicationDescription" /t REG_SZ /d "Launch Links to different browsers" /f
 Reg.exe add "HKLM\SOFTWARE\Link Launcher\Capabilities" /v "ApplicationName" /t REG_SZ /d "Lin kLauncher" /f
 Reg.exe add "HKLM\SOFTWARE\Link Launcher\Capabilities" /v "ApplicationIcon" /t REG_SZ /d "%LINK_LAUNCHER%\LinkLauncher.exe,0" /f
