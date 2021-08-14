@@ -13,12 +13,8 @@ On windows, open Visual Studio 2019 development console, navigate into LinkLaunc
 
 PS. I haven\'t tested building this project any Linux distro yet, although there\'s untested code for Linux too.
 
-### 2. How to use
-1. Add LINK_LAUNCHER variable into your environment variables, and set it\'s value as the path where LinkLauncher.exe lies in.
-
-2. Then create associations.json and fill the structure, read section 3.
-
-3. Run the register_linklauncher.bat under Windows folder as administrator (on your own responsibility) to register LinkLauncher as one of your default web browsers.
+### 2. How to un/install (do it on your own risk)
+Open a console with admin privileges, navigate into LinkLauncher\Windows\ folder, to install run register_linklauncher.bat to uninstall run unregister_linklauncher.bat
 
 ### 3. associations.json
 The associations.json is structured like this:
