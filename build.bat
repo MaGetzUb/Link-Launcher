@@ -11,7 +11,7 @@ if ERRORLEVEL 1 (
         mkdir int
     )
 
-    if not exist resources.rc (
+    if not exist resources.res (
         rc resources.rc
     )
 
