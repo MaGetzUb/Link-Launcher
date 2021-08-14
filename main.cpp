@@ -41,8 +41,7 @@ void ErrorDLG(const std::string& message) {
 
 struct Association {
 	std::vector<std::regex> patterns;
-	std::vector<std::string> arguments;
-	std::vector<std::string> browsers;
+	std::vector<std::pair<std::string, std::vector<std::string>>> browsers;
 };
 
 struct Browser {
@@ -124,7 +123,6 @@ int main(int argc, char* argv[]) {
 	std::unordered_map<std::string, Association> associationMap; 
 
 	std::string associationConfig = installLocation + "associations.json";
-	std::cout << associationConfig << '\n';
 
 	std::string configfile;
 	try {
@@ -184,31 +182,43 @@ int main(int argc, char* argv[]) {
 			JSON_Object* object = json_object(value);
 			
 			const char* name = json_object_get_name(assocs, i);
+			
 
 			JSON_Array* patterns = json_object_get_array(object, "patterns");
 			int patternCount = json_array_get_count(patterns);
 
-			JSON_Array* browsers = json_object_get_array(object, "browser");
+			JSON_Array* browsers = json_object_get_array(object, "browsers");
 			int browserCount = json_array_get_count(browsers);
 
 			if(!browserCount) {
 				logger << '<' << DateTime() << '>' << " at least one browser required!\n";
 				return -1;
 			}
-			
-			JSON_Array* arguments = json_object_get_array(object, "args");
-			int argumentCount = json_array_get_count(arguments);
 
-			if(patterns && browsers && arguments && browserCount) {
+			if(browserCount) {
 				Association assoc;
 				for(int j = 0; j < patternCount; j++) {
 					assoc.patterns.emplace_back(json_array_get_string(patterns, j));
 				}
+
 				for(int j = 0; j < browserCount; j++) {
-					assoc.browsers.emplace_back(json_array_get_string(browsers, j));
-				}
-				for(int j = 0; j < argumentCount; j++) {
-					assoc.arguments.emplace_back(json_array_get_string(arguments, j));
+					JSON_Object* object = json_array_get_object(browsers, j);
+					
+					JSON_Value* browserValue = json_object_get_value(object, "browser");
+					std::string browserName = json_value_get_string(browserValue);
+
+					JSON_Value* argsValue = json_object_get_value(object, "args");
+					JSON_Array* argsArray = json_value_get_array(argsValue);
+					
+					std::vector<std::string> browserArgs = {};
+					int argCount = json_array_get_count(argsArray);
+
+					for(int k = 0; k < argCount; k++) {
+						std::string arg = json_array_get_string(argsArray, k);
+						browserArgs.push_back(arg);
+					}
+
+					assoc.browsers.emplace_back(std::make_pair(browserName, browserArgs));
 				}
 				associationMap.insert(std::make_pair(name, std::move(assoc)));
 			}
@@ -243,14 +253,14 @@ int main(int argc, char* argv[]) {
 		}
 		
 		const Browser& browser = browserMap[
-			assoc->browsers[browserIndex]
+			assoc->browsers[browserIndex].first
 		];
 
 		std::string args = "";
 		const std::vector<std::string>* argList = &browser.defaultArgs; 
 
-		if(assoc->arguments.size()) {
-			argList = &assoc->arguments;
+		if(assoc->browsers[browserIndex].second.size()) {
+			argList = &assoc->browsers[browserIndex].second;
 		}
 
 
