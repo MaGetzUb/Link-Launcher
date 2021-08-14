@@ -17,7 +17,7 @@ PS. I haven\'t tested building this project any Linux distro yet, although there
 On Windows, open a console with admin privileges, navigate into LinkLauncher\Windows\ folder, to install run register_linklauncher.bat to uninstall run unregister_linklauncher.bat
 
 ### 3. associations.json
-The associations.json is structured like this:
+The associations.json must be found from the folder where LINK_LAUNCHER points in the user environment variables, in other words it must lie in the same folder as LinkLauncher.exe. The associations.json is structured like this:
 ```json
 {
 	"browsers": {
