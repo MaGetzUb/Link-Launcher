@@ -2,7 +2,6 @@
 
 pushd .
 cd ..
-set location = %cd%
 setx LINK_LAUNCHER %cd%
 popd
 
