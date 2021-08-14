@@ -1,0 +1,10 @@
+Windows Registry Editor Version 5.00
+
+[-HKEY_LOCAL_MACHINE\Software\Classes\LinkLauncherURL]
+
+; Unregister from Default Programs
+[HKEY_LOCAL_MACHINE\SOFTWARE\RegisteredApplications]
+"Link Launcher"=-"Software\\Link Launcher\\Capabilities"
+
+[-HKEY_LOCAL_MACHINE\SOFTWARE\Link Launcher]
+

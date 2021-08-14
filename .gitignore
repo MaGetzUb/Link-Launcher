@@ -1,0 +1,6 @@
+int/
+.vscode/
+associations.json
+*.log
+*.exe
+*.res

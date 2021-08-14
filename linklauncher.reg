@@ -1,0 +1,36 @@
+Windows Registry Editor Version 5.00
+
+; This .reg file is based on this post: https://tor.stackexchange.com/a/7513
+
+; Capabilities of this app:
+[HKEY_LOCAL_MACHINE\SOFTWARE\Link Launcher\Capabilities]
+"ApplicationDescription"="Launch Links to different browsers"
+"ApplicationIcon"="G:\\Dev\\LinkLauncher\\LinkLauncher.exe,0"
+"ApplicationName"="LinkLauncher"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Link Launcher\Capabilities\FileAssociations]
+".htm"="LinkLauncherURL"
+".html"="LinkLauncherURL"
+".shtml"="LinkLauncherURL"
+".xht"="LinkLauncherURL"
+".xhtml"="LinkLauncherURL"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Link Launcher\Capabilities\URLAssociations]
+"ftp"="LinkLauncherURL"
+"http"="LinkLauncherURL"
+"https"="LinkLauncherURL"
+
+;Register as default program
+[HKEY_LOCAL_MACHINE\SOFTWARE\RegisteredApplications]
+"Link Launcher"="Software\\Link Launcher\\Capabilities"
+
+[HKEY_LOCAL_MACHINE\Software\Classes\LinkLauncherURL]
+@="Web Browser Document"
+"FriendlyTypeName"="Web Browser Document"
+
+[HKEY_LOCAL_MACHINE\Software\Classes\LinkLauncherURL\shell]
+
+[HKEY_LOCAL_MACHINE\Software\Classes\LinkLauncherURL\shell\open]
+
+[HKEY_LOCAL_MACHINE\Software\Classes\LinkLauncherURL\shell\open\command]
+@="\"G:\\Dev\\LinkLauncher\\LinkLauncher\\LinkLauncher.exe\" \"%1\""
