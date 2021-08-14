@@ -5,7 +5,7 @@ Windows Registry Editor Version 5.00
 ; Capabilities of this app:
 [HKEY_LOCAL_MACHINE\SOFTWARE\Link Launcher\Capabilities]
 "ApplicationDescription"="Launch Links to different browsers"
-"ApplicationIcon"="G:\\Dev\\LinkLauncher\\LinkLauncher.exe,0"
+"%LINK_LAUNCHER%\\LinkLauncher.exe,0"
 "ApplicationName"="LinkLauncher"
 
 [HKEY_LOCAL_MACHINE\SOFTWARE\Link Launcher\Capabilities\FileAssociations]
@@ -33,4 +33,4 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\Software\Classes\LinkLauncherURL\shell\open]
 
 [HKEY_LOCAL_MACHINE\Software\Classes\LinkLauncherURL\shell\open\command]
-@="\"G:\\Dev\\LinkLauncher\\LinkLauncher\\LinkLauncher.exe\" \"%1\""
+@="\"%LINK_LAUNCHER%\\LinkLauncher.exe\" \"%1\""
