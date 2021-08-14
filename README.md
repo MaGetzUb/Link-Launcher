@@ -18,7 +18,7 @@ PS. I haven\'t tested building this project any Linux distro yet, although there
 
 2. Then create associations.json and fill the structure, read section 3.
 
-3. Run the linklauncher.reg (on your own responsibility) to register LinkLauncher as one of your default web browsers.
+3. Run the register_linklauncher.bat under Windows folder as administrator (on your own responsibility) to register LinkLauncher as one of your default web browsers.
 
 ### 3. associations.json
 The associations.json is structured like this:
