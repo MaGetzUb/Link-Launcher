@@ -9,7 +9,7 @@ popd
 
 
 Reg.exe add "HKLM\SOFTWARE\Link Launcher\Capabilities" /v "ApplicationDescription" /t REG_SZ /d "Launch Links to different browsers" /f
-Reg.exe add "HKLM\SOFTWARE\Link Launcher\Capabilities" /v "ApplicationName" /t REG_SZ /d "Lin kLauncher" /f
+Reg.exe add "HKLM\SOFTWARE\Link Launcher\Capabilities" /v "ApplicationName" /t REG_SZ /d "Link Launcher" /f
 Reg.exe add "HKLM\SOFTWARE\Link Launcher\Capabilities" /v "ApplicationIcon" /t REG_SZ /d "%LINK_LAUNCHER%\LinkLauncher.exe,0" /f
 Reg.exe add "HKLM\SOFTWARE\Link Launcher\Capabilities\FileAssociations" /v ".htm" /t REG_SZ /d "LinkLauncherURL" /f
 Reg.exe add "HKLM\SOFTWARE\Link Launcher\Capabilities\FileAssociations" /v ".html" /t REG_SZ /d "LinkLauncherURL" /f
