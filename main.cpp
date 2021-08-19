@@ -237,7 +237,8 @@ int main(int argc, char* argv[]) {
 					JSON_Array* stringsArray = json_array_get_array(replacements, k);
 					std::vector<std::string> strings;
 					for(int l = 0; l < json_array_get_count(stringsArray); l++) {
-						strings.emplace_back(json_array_get_string(stringsArray, l));
+						const char* arr = json_array_get_string(stringsArray, l);
+						strings.emplace_back(arr);
 					}
 					assoc.replacements.emplace_back(std::move(strings));
 				}
@@ -262,10 +263,17 @@ int main(int argc, char* argv[]) {
 			auto replacements = i.second.replacements[j];
 
 			if(std::regex_search(link, match, pattern)) {
+				std::cout << replacements.size() << '\n';
 				if(!replacements.empty()) {
-					std::uniform_int_distribution<int> distrib(0, assoc->replacements.size()-1);
-					int index = distrib(randomDevice);
-					link = replacements[index];
+					int replacementIndex = 0;
+
+					if(replacements.size() > 1) {
+						std::uniform_int_distribution<int> distrib(0, assoc->replacements.size()-1);
+						replacementIndex = distrib(randomDevice);
+					}
+
+					link = replacements[replacementIndex];
+					std::cout << link << '\n';
 					ReplaceSlots(link, match);
 				}
 				assoc = &i.second;
