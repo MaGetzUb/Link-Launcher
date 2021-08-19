@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <random>
+#include <format>
 #include <stdexcept>
 #include "parson.h"
 
@@ -42,6 +43,7 @@ void ErrorDLG(const std::string& message) {
 struct Association {
 	std::vector<std::regex> patterns;
 	std::vector<std::pair<std::string, std::vector<std::string>>> browsers;
+	std::vector<std::vector<std::string>> replacements;
 };
 
 struct Browser {
@@ -69,6 +71,23 @@ Logger operator<<(Logger logger, const T& in) {
 	return logger;
 }
 //End of haxx
+bool ReplaceSlots(std::string& text, const std::smatch& replacements) {
+	//static_assert(std::is_same_v<decltype(replacements[0]), std::string>, "Array element doesn't contain std::string");
+	std::size_t next = 0;
+	for(std::size_t index = text.find('<', next); index != std::string::npos; index = text.find('<', next)) {
+		next = text.find('>', index);
+		if(next != std::string::npos) {
+			int replaceIndex = std::stoi(text.substr(index+1, next-index-1));
+			if(replaceIndex >= std::size(replacements))
+				return false;
+			text.replace(index, next-index+1, replacements[replaceIndex]);
+		} else {
+			return false;
+		}
+	}
+	return true;
+}
+
 
 #if defined(NDEBUG) && defined(_WIN32)
 //If subsystem is WINDOWS, the console is gotten rid of and the good ol' main stops existing, so we need to fake it.
@@ -79,19 +98,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* pCmdLi
 }
 #endif 
 
-std::string ReadFile(const std::string& filepath) {
-	if(std::ifstream file{filepath, std::ios::in | std::ios::ate}) {
-		std::string str{};
-		str.resize(file.tellg(), '\0');
-		file.seekg(0, std::ios::beg);
-		file.read(str.data(), str.size());
-		return str;
-	} 
-	//Let's just use these nasty exceptions this once :D
-	throw std::runtime_error{"Failed to open file! " + filepath};
-	return {};
-}
-
+std::string ReadFile(const std::string& filepath);
 
 int main(int argc, char* argv[]) {
 
@@ -190,6 +197,10 @@ int main(int argc, char* argv[]) {
 			JSON_Array* browsers = json_object_get_array(object, "browsers");
 			int browserCount = json_array_get_count(browsers);
 
+			JSON_Array* replacements = json_object_get_array(object, "replacements");
+			int replacementCount = json_array_get_count(replacements);
+
+
 			if(!browserCount) {
 				logger << '<' << DateTime() << '>' << " at least one browser required!\n";
 				return -1;
@@ -209,7 +220,8 @@ int main(int argc, char* argv[]) {
 
 					JSON_Value* argsValue = json_object_get_value(object, "args");
 					JSON_Array* argsArray = json_value_get_array(argsValue);
-					
+
+
 					std::vector<std::string> browserArgs = {};
 					int argCount = json_array_get_count(argsArray);
 
@@ -220,20 +232,42 @@ int main(int argc, char* argv[]) {
 
 					assoc.browsers.emplace_back(std::make_pair(browserName, browserArgs));
 				}
+
+				for(int k = 0; k < replacementCount; k++) {
+					JSON_Array* stringsArray = json_array_get_array(replacements, k);
+					std::vector<std::string> strings;
+					for(int l = 0; l < json_array_get_count(stringsArray); l++) {
+						strings.emplace_back(json_array_get_string(stringsArray, l));
+					}
+					assoc.replacements.emplace_back(std::move(strings));
+				}
+
 				associationMap.insert(std::make_pair(name, std::move(assoc)));
 			}
 			
+
 
 		}
 	}
 
 	const Association* assoc = &associationMap["default"];
 
+	std::string link = argv[1];
 
 	for(const auto& i: associationMap) {
-		std::cmatch match;
-		for(const auto& pattern: i.second.patterns) {
-			if(std::regex_search(argv[1], match, pattern)) {
+		std::smatch match;
+		auto patterns = i.second.patterns;
+		for(int j = 0; j < patterns.size(); j++) {
+			const auto& pattern = patterns[j];
+			auto replacements = i.second.replacements[j];
+
+			if(std::regex_search(link, match, pattern)) {
+				if(!replacements.empty()) {
+					std::uniform_int_distribution<int> distrib(0, assoc->replacements.size()-1);
+					int index = distrib(randomDevice);
+					link = replacements[index];
+					ReplaceSlots(link, match);
+				}
 				assoc = &i.second;
 				break;
 			}
@@ -271,12 +305,12 @@ int main(int argc, char* argv[]) {
 			}
 		}
 
-		args.append(argv[1]);
+		args.append(link);
 
 		arguments = args;
 
 		if(browser.path.empty()) {
-			logger << '<' << DateTime() << '>' << " ERROR: Cannot open URL: [" << argv[1] << "] no browser exist for the url.\n";
+			logger << '<' << DateTime() << '>' << " ERROR: Cannot open URL: [" << link << "] no browser exist for the url.\n";
 			return -1;
 		}
 
@@ -294,7 +328,7 @@ int main(int argc, char* argv[]) {
 		BOOL res = ShellExecuteExA(&info);
 			
 		if(res == TRUE) {
-			logger << '<' << DateTime() << '>' << "INFO: [" << argv[1] << "] Opened with: " << browser.path << '\n';
+			logger << '<' << DateTime() << '>' << "INFO: [" << link << "] Opened with: " << browser.path << '\n';
 		}
 
 #elif defined(__linux__)
@@ -309,6 +343,21 @@ int main(int argc, char* argv[]) {
 
 	return 0;
 }
+
+std::string ReadFile(const std::string& filepath) {
+	if(std::ifstream file{filepath, std::ios::in | std::ios::ate}) {
+		std::string str{};
+		str.resize(file.tellg(), '\0');
+		file.seekg(0, std::ios::beg);
+		file.read(str.data(), str.size());
+		return str;
+	} 
+	//Let's just use these nasty exceptions this once :D
+	throw std::runtime_error{"Failed to open file! " + filepath};
+	return {};
+}
+
+
 
 extern "C" {
 #include "parson.c"

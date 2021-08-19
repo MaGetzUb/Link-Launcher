@@ -1,7 +1,8 @@
 # Link Launcher
 *Filter links with regular expressions and launch them into your favourite browsers*
 
-Have you ever wanted to open a youtube link from other software (Discord perhaps) into VLC player? Well now you can. When you build this executable and register it as a web browser in Windows registry, this program intercepts any links, pattern matches them with regular expression and launches them in an application of your choosing. 
+Have you ever wanted to open a youtube link from other software (Discord perhaps) into VLC player? Well now you can. When you build this executable and register it as a web browser in Windows registry, this program intercepts any links, pattern matches them with regular expression and launches them in an application of your choosing. A new feature
+now you can redirect link onto a custom portal service, for example youtube can be directed to invidious instance. Just capture the video id with parenthesis and add a replacement into replacements array of arrays. Each pattern has its own array of replacements.
 
 Big thanks for [kgabis](https://github.com/kgabis) for the [MIT](https://github.com/kgabis/parson/blob/master/LICENSE)-licensed [parson](https://github.com/kgabis/parson) (json parsing) library.
 
@@ -42,8 +43,8 @@ The associations.json must be found from the folder where LINK_LAUNCHER points i
 		},
 		"youtube": {
 			"patterns": [
-				"youtube\\.com\\/watch\\?.*&?v=.*",
-				"youtu\\.be\\/.*"
+				"youtube\\.com\\/watch\\?.*&?v=(.*)",
+				"youtu\\.be\\/(.*)"
 			],
 			"browsers": [
 				{
@@ -51,6 +52,10 @@ The associations.json must be found from the folder where LINK_LAUNCHER points i
 					"args": []
 				}
 			],
+			"replacements": [
+				["https://invidious.silkky.cloud/watch?v=<1>"],
+				["https://invidious.silkky.cloud/watch?v=<1>"]
+			]
 		}
 	}
 }
