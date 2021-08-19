@@ -74,10 +74,6 @@ Logger operator<<(Logger logger, const T& in) {
 bool ReplaceSlots(std::string& text, const std::smatch& replacements) {
 	//static_assert(std::is_same_v<decltype(replacements[0]), std::string>, "Array element doesn't contain std::string");
 	std::size_t next = 0;
-
-	for(int i = 0; i < replacements.size(); i++)
-		std::cout << replacements[i] << ' ';
-
 	for(std::size_t index = text.find('<', next); index != std::string::npos; index = text.find('<', next)) {
 		next = text.find('>', index);
 		if(next != std::string::npos) {
@@ -212,6 +208,7 @@ int main(int argc, char* argv[]) {
 
 			if(browserCount) {
 				Association assoc;
+
 				for(int j = 0; j < patternCount; j++) {
 					assoc.patterns.emplace_back(json_array_get_string(patterns, j));
 				}
@@ -241,8 +238,8 @@ int main(int argc, char* argv[]) {
 					JSON_Array* stringsArray = json_array_get_array(replacements, k);
 					std::vector<std::string> strings;
 					for(int l = 0; l < json_array_get_count(stringsArray); l++) {
-						const char* arr = json_array_get_string(stringsArray, l);
-						strings.emplace_back(arr);
+						const char* str = json_array_get_string(stringsArray, l);
+						strings.emplace_back(str);
 					}
 					assoc.replacements.emplace_back(std::move(strings));
 				}
@@ -258,8 +255,8 @@ int main(int argc, char* argv[]) {
 	const Association* assoc = &associationMap["default"];
 
 	std::string link = argv[1];
-
 	std::string replacementLink = "";
+
 	for(const auto& i: associationMap) {
 		std::smatch match;
 		auto patterns = i.second.patterns;
@@ -268,26 +265,29 @@ int main(int argc, char* argv[]) {
 			auto replacements = i.second.replacements[j];
 
 			if(std::regex_search(link, match, pattern)) {
-				std::cout << replacements.size() << '\n';
 				if(!replacements.empty()) {
 					int replacementIndex = 0;
 
 					if(replacements.size() > 1) {
-						std::uniform_int_distribution<int> distrib(0, assoc->replacements.size()-1);
+						std::uniform_int_distribution<int> distrib(0, assoc->replacements.size());
 						replacementIndex = distrib(randomDevice);
 					}
 
 					replacementLink = replacements[replacementIndex];
+					
 					ReplaceSlots(replacementLink, match);
+
 				}
 				assoc = &i.second;
 				break;
 			}
 		}
 	}
-
+	
 	if(!replacementLink.empty()) link = replacementLink;
 	
+	
+
 	//Combine the default-arguments and the link into one string, 
 	//that's passed to the actual browser   
 	std::string arguments = "";
