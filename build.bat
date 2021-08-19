@@ -17,12 +17,14 @@ if ERRORLEVEL 1 (
 
     cd int
 
-    set COMPILER_FLAGS=/O2 /DNDEBUG
-    set LINKER_FLAGS=/SUBSYSTEM:WINDOWS
+
 
     if "%1"=="-dbg" (
         set "COMPILER_FLAGS="
         set "LINKER_FLAGS=/SUBSYSTEM:CONSOLE"
+    ) else (
+        set COMPILER_FLAGS=/O2 /DNDEBUG
+        set LINKER_FLAGS=/SUBSYSTEM:WINDOWS
     )
 
     echo "%COMPILER_FLAGS%"
