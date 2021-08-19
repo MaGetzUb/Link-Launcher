@@ -23,7 +23,7 @@ if ERRORLEVEL 1 (
     echo "%COMPILER_FLAGS%"
     echo "%LINKER_FLAGS%"
      
-    cl ..\main.cpp /std:c++17 /utf-8 %COMPILER_FLAGS% /link %LINKER_FLAGS% kernel32.lib user32.lib shell32.lib ..\resources.res /out:..\LinkLauncher.exe
+    cl /EHsc /nologo ..\main.cpp /std:c++latest /utf-8 %COMPILER_FLAGS% /link %LINKER_FLAGS% kernel32.lib user32.lib shell32.lib ..\resources.res /out:..\LinkLauncher.exe
 
     cd ..
 
