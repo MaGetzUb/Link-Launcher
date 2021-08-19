@@ -74,6 +74,10 @@ Logger operator<<(Logger logger, const T& in) {
 bool ReplaceSlots(std::string& text, const std::smatch& replacements) {
 	//static_assert(std::is_same_v<decltype(replacements[0]), std::string>, "Array element doesn't contain std::string");
 	std::size_t next = 0;
+
+	for(int i = 0; i < replacements.size(); i++)
+		std::cout << replacements[i] << ' ';
+
 	for(std::size_t index = text.find('<', next); index != std::string::npos; index = text.find('<', next)) {
 		next = text.find('>', index);
 		if(next != std::string::npos) {
@@ -255,6 +259,7 @@ int main(int argc, char* argv[]) {
 
 	std::string link = argv[1];
 
+	std::string replacementLink = "";
 	for(const auto& i: associationMap) {
 		std::smatch match;
 		auto patterns = i.second.patterns;
@@ -272,9 +277,8 @@ int main(int argc, char* argv[]) {
 						replacementIndex = distrib(randomDevice);
 					}
 
-					link = replacements[replacementIndex];
-					std::cout << link << '\n';
-					ReplaceSlots(link, match);
+					replacementLink = replacements[replacementIndex];
+					ReplaceSlots(replacementLink, match);
 				}
 				assoc = &i.second;
 				break;
@@ -282,6 +286,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
+	if(!replacementLink.empty()) link = replacementLink;
 	
 	//Combine the default-arguments and the link into one string, 
 	//that's passed to the actual browser   
